@@ -25,7 +25,7 @@ setup(
     name='flickrtag',
     version=flickrtag.__version__,
     description='Display Flickr images easily in your Pelican articles.',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Chris Streeter',
     author_email='chris@chrisstreeter.com',
     url='https://github.com/streeter/pelican-flickrtag',

@@ -19,12 +19,13 @@ logger = logging.getLogger(__name__)
 def setup_flickr(pelican):
     """Add Flickr api object to Pelican settings."""
 
-    try:
-        api_client.API_KEY = pelican.settings['FLICKR_API_KEY']
-        api_client.API_SECRET = pelican.settings['FLICKR_API_SECRET']
-    except KeyError:
-        raise Exception('FLICKR_API_KEY and FLICKR_API_SECRET are '
-            'required configuration settings.')
+    for key in ('TOKEN', 'KEY', 'SECRET'):
+        try:
+            value = pelican.settings['FLICKR_API_' + key]
+            setattr(api_client, 'API_' + key, value)
+        except KeyError:
+            logger.warning('FLICKR_API_%s is not defined in the configuration' % key)
+            break
 
     pelican.settings['FLICKR_TAG_API_CLIENT'] = api_client
     pelican.settings.setdefault('FLICKR_TAG_CACHE_LOCATION',

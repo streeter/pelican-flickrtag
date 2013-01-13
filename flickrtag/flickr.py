@@ -37,6 +37,7 @@ HOST = 'http://flickr.com'
 API = '/services/rest'
 
 # set these here or using flickr.API_KEY in your application
+API_TOKEN = None
 API_KEY = ''
 API_SECRET = ''
 email = None
@@ -44,9 +45,7 @@ password = None
 AUTH = False
 debug = False
 
-# The next 3 variables are only important if authentication is used
-
-api_token = None
+# The next 2 variables are only important if authentication is used
 
 # this can be set here or using flickr.tokenPath in your application
 # this is the path to the folder containing tokenFile (default: token.txt)
@@ -1371,20 +1370,20 @@ class Auth():
         return data.rsp.auth.token.text
 
 def userToken():
-    global api_token
+    global API_TOKEN
     # This method allows you flickr.py to retrive the saved token
     # as once the token for a program has been got from flickr,
     # it cannot be got again, so flickr.py saves it in a file
     # called token.txt (default) somewhere.
-    if api_token is not None:
-        return api_token
+    if API_TOKEN is not None:
+        return API_TOKEN
     if not tokenPath == '':
         f = file(os.path.join(tokenPath, tokenFile), 'r')
     else:
         f = file(tokenFile, 'r')
-    api_token = f.read()
+    API_TOKEN = f.read()
     f.close()
-    return api_token
+    return API_TOKEN
 
 def getUserPhotosURL(userid):
     """Returns user URL in an array (to access, use array[1])"""
