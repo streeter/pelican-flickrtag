@@ -3,11 +3,6 @@ Pelican Flickr Tag
 
 Pelican Flickr Tag is a library to make it easy to display Flickr images in your Pelican blogs.
 
-Usage
------
-
-blah
-
 Installation
 ------------
 
@@ -27,6 +22,52 @@ Then add a bit of code to your blog configuration:
         # ...
     ]
 
+Usage
+-----
+
+In your articles, just add lines to your posts that look like:
+
+.. code-block:: html
+
+    [flickr:id=5128831453]
+
+This will tell the plugin to insert the image with id ``8152886277`` into your post. By default the resulting HTML will look like:
+
+.. code-block:: html
+
+    <p class="caption-container">
+        <a class="caption" href="http://www.flickr.com/photos/chrisstreeter/5128831453/" target="_blank">
+            <img src="http://farm5.static.flickr.com/4037/5128831453_792359af82_z.jpg" alt="Sand Dunes" title="Sand Dunes" class="img-polaroid" />
+        </a>
+        <span class="caption-text muted">Sand Dunes</span>
+    </p>
+
+If you want to change what the output looks like, you can create your own Jinja template and stick it in your theme directory. Then override the ``FLICKR_TAG_TEMPLATE_NAME`` setting to point to your template. See below for more information.
+
+Settings
+--------
+
+``FLICKR_TAG_TEMPLATE_NAME`` - Specifies the name of the template to be used to render each replaced tag. This uses Pelican's template lookup to find the name of the template. If the template is named `flickrtag.html`, then this setting should be set to `flickrtag`. (Optional)
+
+``FLICKR_TAG_CACHE_LOCATION`` - The cache location which stores the looked up photo information. This dramatically speeds up building of the site and permits you to do it offline as well. Defaults to `/tmp/com.chrisstreeter.flickrtag-images.cache` (Optional)
+
+Flickr Settings
+---------------
+
+The following two settings are required. In order to set them up, you will need to set up a Flickr API key. You can do this by `creating an app on Flickr`_. If the blog is a personal blog, then apply for a non-commercial key. Once you've got your key and secret, add them to your Pelican configuration.
+
+``FLICKR_API_KEY`` - The API key for your app to access the Flickr API. (Required)
+
+``FLICKR_API_SECRET`` - The API secret for your app to access the Flickr API. (Required)
+
+Flickr Tokens
+-------------
+
+A Flickr API token is only required if you want to access photos that are private to your account and cannot be gotten through the public API. I'll assume you know what you're doing and how to get a Flickr API token for this setting.
+
+``FLICKR_API_TOKEN`` - The API token to access the Flickr API. (Optional)
+
+
 Notes
 -----
 
@@ -40,4 +81,4 @@ Uses the `MIT`_ license.
 
 .. _flickrpy: http://code.google.com/p/flickrpy
 .. _MIT: http://opensource.org/licenses/MIT
-
+.. _`creating an app on Flickr`: http://www.flickr.com/services/apps/create/apply/
