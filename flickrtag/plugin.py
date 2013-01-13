@@ -24,7 +24,7 @@ def setup_flickr(pelican):
             value = pelican.settings['FLICKR_API_' + key]
             setattr(api_client, 'API_' + key, value)
         except KeyError:
-            logger.warning('FLICKR_API_%s is not defined in the configuration' % key)
+            logger.warning('[flickrtag]: FLICKR_API_%s is not defined in the configuration' % key)
             break
 
     pelican.settings['FLICKR_TAG_API_CLIENT'] = api_client
@@ -35,18 +35,18 @@ def setup_flickr(pelican):
 def replace_article_tags(generator):
     api = generator.context.get('FLICKR_TAG_API_CLIENT', None)
     if api is None:
-        logger.error('Unable to get the Flickr API object')
+        logger.error('[flickrtag]: Unable to get the Flickr API object')
         return
 
     tmp_file = generator.context.get('FLICKR_TAG_CACHE_LOCATION')
 
     photo_ids = set([])
-    logger.info('Parsing articles for photo ids...')
+    logger.info('[flickrtag]: Parsing articles for photo ids...')
     for article in generator.articles:
         for match in flickr_regex.findall(article._content):
             photo_ids.add(match[1])
 
-    logger.info('Found %d photo ids in the articles' % len(photo_ids))
+    logger.info('[flickrtag]: Found %d photo ids in the articles' % len(photo_ids))
 
     try:
         with open(tmp_file, 'r') as f:
@@ -59,9 +59,9 @@ def replace_article_tags(generator):
         photo_ids = list(set(photo_ids) - cached_ids)
 
     if photo_ids:
-        logger.info('Fetching photo information from Flickr...')
+        logger.info('[flickrtag]: Fetching photo information from Flickr...')
         for id in photo_ids:
-            logger.info('Fetching photo information for %s' % id)
+            logger.info('[flickrtag]: Fetching photo information for %s' % id)
             photo = api.Photo(id=id)
             # Trigger the API call...
             photo_mapping[id] = {
@@ -73,14 +73,14 @@ def replace_article_tags(generator):
         with open(tmp_file, 'w') as f:
             pickle.dump(photo_mapping, f)
     else:
-        logger.info('Found pickled photo mapping')
+        logger.info('[flickrtag]: Found pickled photo mapping')
 
-    logger.info('Inserting photo information into articles...')
+    logger.info('[flickrtag]: Inserting photo information into articles...')
     for article in generator.articles:
         for match in flickr_regex.findall(article._content):
             fid = match[1]
             if fid not in photo_mapping:
-                logger.error('Could not find info for a photo!')
+                logger.error('[flickrtag]: Could not find info for a photo!')
                 continue
 
             replacement = """<p class="caption-container">
