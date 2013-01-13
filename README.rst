@@ -1,7 +1,7 @@
 Pelican Flickr Tag
 ==================
 
-Pelican Flickr Tag is a library to make it easy to display Flickr images in your Pelican blogs.
+Pelican Flickr Tag is a library to make it easy to display Flickr images in your Pelican_ blogs.
 
 Installation
 ------------
@@ -54,7 +54,7 @@ Settings
 Flickr Settings
 ---------------
 
-The following two settings are required. In order to set them up, you will need to set up a Flickr API key. You can do this by `creating an app on Flickr`_. If the blog is a personal blog, then apply for a non-commercial key. Once you've got your key and secret, add them to your Pelican configuration.
+The following two settings are required. In order to set them up, you will need to set up a Flickr API key. You can do this by `creating an app on Flickr`_. If the blog is a personal blog, then apply for a non-commercial key. Once you've got your key and secret, add them to your `Pelican configuration`_.
 
 ``FLICKR_API_KEY`` - The API key for your app to access the Flickr API. (Required)
 
@@ -79,6 +79,8 @@ License
 Uses the `MIT`_ license.
 
 
+.. _Pelican: http://blog.getpelican.com/
+.. _`Pelican configuration`: http://docs.getpelican.com/en/latest/settings.html
 .. _flickrpy: http://code.google.com/p/flickrpy
 .. _MIT: http://opensource.org/licenses/MIT
 .. _`creating an app on Flickr`: http://www.flickr.com/services/apps/create/apply/
