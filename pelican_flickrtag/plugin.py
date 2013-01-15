@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Add Header Images to context
-=========================
+Embed Flickr Images in Pelican Articles
+=======================================
 
 """
 import logging

@@ -6,7 +6,7 @@ Pelican Flickr Tag is a library to make it easy to display Flickr images in your
 Installation
 ------------
 
-To install requests, simply:
+To install the plugin, simply:
 
 .. code-block:: bash
 
@@ -18,7 +18,7 @@ Then add a bit of code to your blog configuration:
 
     PLUGINS = [
         # ...
-        'flickrtag',
+        'pelican_flickrtag',
         # ...
     ]
 

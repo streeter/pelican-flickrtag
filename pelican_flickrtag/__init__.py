@@ -5,4 +5,4 @@ __license__ = 'MIT'
 __copyright__ = 'Copyright 2013'
 
 
-from flickrtag.plugin import register
+from pelican_flickrtag.plugin import register

@@ -3,7 +3,7 @@
 import os
 import sys
 
-import flickrtag
+import pelican_flickrtag
 
 try:
     from setuptools import setup
@@ -15,15 +15,17 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 packages = [
-    'flickrtag',
+    'pelican_flickrtag',
 ]
 
 requires = [
+    'jinja2',
+    'pelican',
 ]
 
 setup(
     name='pelican-flickrtag',
-    version=flickrtag.__version__,
+    version=pelican_flickrtag.__version__,
     description='Display Flickr images easily in your Pelican articles.',
     long_description=open('README.rst').read(),
     author='Chris Streeter',
@@ -31,7 +33,7 @@ setup(
     url='https://github.com/streeter/pelican-flickrtag',
     packages=packages,
     package_data={'': ['LICENSE', ]},
-    package_dir={'flickrtag': 'flickrtag'},
+    package_dir={'pelican_flickrtag': 'pelican_flickrtag'},
     include_package_data=True,
     install_requires=requires,
     license=open('LICENSE').read(),
