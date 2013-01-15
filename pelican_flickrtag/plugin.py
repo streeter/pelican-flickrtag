@@ -8,19 +8,16 @@ import logging
 import pickle
 import re
 
-from jinja2 import Template
-from pelican import signals
-
 import flickr as api_client
 
 
 flickr_regex = re.compile(r'<p>(\[flickr:id\=([0-9]+)\])</p>')
-default_template = Template("""<p class="caption-container">
+default_template = """<p class="caption-container">
     <a class="caption" href="{{url}}" target="_blank">
         <img src="{{raw_url}}" alt="{{title}}" title="{{title}}" class="img-polaroid" />
     </a>
     <span class="caption-text muted">{{title}}</span>
-</p>""")
+</p>"""
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +38,8 @@ def setup_flickr(pelican):
 
 
 def replace_article_tags(generator):
+    from jinja2 import Template
+
     api = generator.context.get('FLICKR_TAG_API_CLIENT', None)
     if api is None:
         logger.error('[flickrtag]: Unable to get the Flickr API object')
@@ -91,9 +90,9 @@ def replace_article_tags(generator):
             template = generator.get_template(template_name)
         except Exception:
             logger.error('[flickrtag]: Unable to find the custom template %s' % template_name)
-            template = default_template
+            template = Template(default_template)
     else:
-        template = default_template
+        template = Template(default_template)
 
     logger.info('[flickrtag]: Inserting photo information into articles...')
     for article in generator.articles:
@@ -115,6 +114,7 @@ def replace_article_tags(generator):
 
 def register():
     """Plugin registration."""
+    from pelican import signals
 
     signals.initialized.connect(setup_flickr)
 
