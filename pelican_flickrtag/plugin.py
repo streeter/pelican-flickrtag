@@ -19,13 +19,8 @@ default_template = """<p class="caption-container">
             title="{{title}}"
             class="img-polaroid"
             {% if FLICKR_TAG_INCLUDE_DIMENSIONS %}
-                {% if rotation in (90, 270, ) %}
-                    width="{{FLICKR_TAG_HEIGHT}}"
-                    height="{{FLICKR_TAG_WIDTH}}"
-                {% else %}
-                    width="{{FLICKR_TAG_WIDTH}}"
-                    height="{{FLICKR_TAG_HEIGHT}}"
-                {% endif %}
+                width="{{width}}"
+                height="{{height}}"
             {% endif %} />
     </a>
     <span class="caption-text muted">{{title}}</span>
@@ -48,8 +43,20 @@ def setup_flickr(pelican):
     pelican.settings.setdefault('FLICKR_TAG_CACHE_LOCATION',
         '/tmp/com.chrisstreeter.flickrtag-images.cache')
     pelican.settings.setdefault('FLICKR_TAG_INCLUDE_DIMENSIONS', False)
-    pelican.settings.setdefault('FLICKR_TAG_HEIGHT', 424)
-    pelican.settings.setdefault('FLICKR_TAG_WIDTH', 640)
+    pelican.settings.setdefault('FLICKR_TAG_IMAGE_SIZE', 'Medium 640')
+
+
+def url_for_alias(photo, alias):
+    if alias == 'Medium 640':
+        return photo.getMedium640()
+    else:
+        return photo.getMedium()
+
+
+def size_for_alias(sizes, alias):
+    if alias not in ('Medium 640', 'Medium'):
+        alias = 'Medium'
+    return [s for s in sizes if s['label'] == alias][0]
 
 
 def replace_article_tags(generator):
@@ -61,6 +68,9 @@ def replace_article_tags(generator):
         return
 
     tmp_file = generator.context.get('FLICKR_TAG_CACHE_LOCATION')
+
+    include_dimensions = generator.context.get('FLICKR_TAG_INCLUDE_DIMENSIONS')
+    size_alias = generator.context.get('FLICKR_TAG_IMAGE_SIZE')
 
     photo_ids = set([])
     logger.info('[flickrtag]: Parsing articles for photo ids...')
@@ -88,10 +98,15 @@ def replace_article_tags(generator):
             # Trigger the API call...
             photo_mapping[id] = {
                 'title': photo.title,
-                'raw_url': photo.getMedium(),
-                'rotation': photo.rotation,
+                'raw_url': url_for_alias(photo, size_alias),
                 'url': photo.url,
             }
+
+            if include_dimensions:
+                sizes = photo.getSizes()
+                size = size_for_alias(sizes, size_alias)
+                photo_mapping[id]['width'] = size['width']
+                photo_mapping[id]['height'] = size['height']
 
         with open(tmp_file, 'w') as f:
             pickle.dump(photo_mapping, f)

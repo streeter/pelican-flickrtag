@@ -326,8 +326,9 @@ class Photo(object):
             return None
         return data.rsp.comments
 
-    def _getDirectURL(self, size):
-        return "http://farm%s.static.flickr.com/%s/%s_%s_%s.jpg" % \
+    def _getDirectURL(self, size=None):
+        size = "_%s" % size if size else ""
+        return "http://farm%s.static.flickr.com/%s/%s_%s%s.jpg" % \
             (self.farm, self.server, self.id, self.secret, size)
 
     def getThumbnail(self):
@@ -352,6 +353,13 @@ class Photo(object):
         return self._getDirectURL('m')
 
     def getMedium(self):
+        """
+        Return a string representation of the URL to the medium
+        image (not the medium image page).
+        """
+        return self._getDirectURL()
+
+    def getMedium640(self):
         """
         Return a string representation of the URL to the medium
         image (not the medium image page).
