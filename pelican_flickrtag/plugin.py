@@ -19,8 +19,13 @@ default_template = """<p class="caption-container">
             title="{{title}}"
             class="img-polaroid"
             {% if FLICKR_TAG_INCLUDE_DIMENSIONS %}
-                width="{{FLICKR_TAG_WIDTH}}"
-                height="{{FLICKR_TAG_HEIGHT}}"
+                {% if rotation in (90, 270, ) %}
+                    width="{{FLICKR_TAG_HEIGHT}}"
+                    height="{{FLICKR_TAG_WIDTH}}"
+                {% else %}
+                    width="{{FLICKR_TAG_WIDTH}}"
+                    height="{{FLICKR_TAG_HEIGHT}}"
+                {% endif %}
             {% endif %} />
     </a>
     <span class="caption-text muted">{{title}}</span>
@@ -84,6 +89,7 @@ def replace_article_tags(generator):
             photo_mapping[id] = {
                 'title': photo.title,
                 'raw_url': photo.getMedium(),
+                'rotation': photo.rotation,
                 'url': photo.url,
             }
 
