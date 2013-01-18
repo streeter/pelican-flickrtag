@@ -14,7 +14,14 @@ import flickr as api_client
 flickr_regex = re.compile(r'<p>(\[flickr:id\=([0-9]+)\])</p>')
 default_template = """<p class="caption-container">
     <a class="caption" href="{{url}}" target="_blank">
-        <img src="{{raw_url}}" alt="{{title}}" title="{{title}}" class="img-polaroid" />
+        <img src="{{raw_url}}"
+            alt="{{title}}"
+            title="{{title}}"
+            class="img-polaroid"
+            {% if FLICKR_TAG_INCLUDE_DIMENSIONS %}
+                width="{{FLICKR_TAG_WIDTH}}"
+                height="{{FLICKR_TAG_HEIGHT}}"
+            {% endif %} />
     </a>
     <span class="caption-text muted">{{title}}</span>
 </p>"""
@@ -35,6 +42,9 @@ def setup_flickr(pelican):
     pelican.settings['FLICKR_TAG_API_CLIENT'] = api_client
     pelican.settings.setdefault('FLICKR_TAG_CACHE_LOCATION',
         '/tmp/com.chrisstreeter.flickrtag-images.cache')
+    pelican.settings.setdefault('FLICKR_TAG_INCLUDE_DIMENSIONS', False)
+    pelican.settings.setdefault('FLICKR_TAG_HEIGHT', 424)
+    pelican.settings.setdefault('FLICKR_TAG_WIDTH', 640)
 
 
 def replace_article_tags(generator):
