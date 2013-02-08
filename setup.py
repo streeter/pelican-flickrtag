@@ -1,18 +1,24 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
 import sys
-
-import pelican_flickrtag
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
+import pelican_flickrtag
+
+
 if sys.argv[-1] == 'publish':
     os.system('python setup.py sdist upload')
     sys.exit()
+
+
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
+    readme = f.read()
 
 packages = [
     'pelican_flickrtag',
@@ -27,7 +33,7 @@ setup(
     name='pelican-flickrtag',
     version=pelican_flickrtag.__version__,
     description='Display Flickr images easily in your Pelican articles.',
-    long_description=open('README.rst').read(),
+    long_description=readme,
     author='Chris Streeter',
     author_email='chris@chrisstreeter.com',
     url='https://github.com/streeter/pelican-flickrtag',
