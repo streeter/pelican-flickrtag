@@ -52,7 +52,7 @@ Settings
 
 ``FLICKR_TAG_TEMPLATE_NAME`` - Specifies the name of the template to be used to render each replaced tag. This uses Pelican's template lookup to find the name of the template. If the template is named `flickrtag.html`, then this setting should be set to `flickrtag`. (Optional) The default template looks like:
 
-..code-block:: html
+.. code-block:: html
 
     <p class="caption-container">
         <a class="caption" href="{{url}}" target="_blank">
