@@ -42,7 +42,7 @@ setup(
     package_dir={'pelican_flickrtag': 'pelican_flickrtag'},
     include_package_data=True,
     install_requires=requires,
-    license=open('LICENSE').read(),
+    license='MIT',
     zip_safe=False,
     classifiers=(
         'Development Status :: 4 - Beta',
