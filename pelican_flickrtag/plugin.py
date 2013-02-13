@@ -143,6 +143,10 @@ def replace_article_tags(generator):
             article._content = article._content.replace(match[0], replacement)
 
 
+def replace_page_tags(generator):
+    pass
+
+
 def register():
     """Plugin registration."""
     from pelican import signals
@@ -150,3 +154,4 @@ def register():
     signals.initialized.connect(setup_flickr)
 
     signals.article_generator_finalized.connect(replace_article_tags)
+    signals.pages_generator_finalized.connect(replace_page_tags)
