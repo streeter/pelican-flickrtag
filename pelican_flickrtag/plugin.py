@@ -156,4 +156,4 @@ def register():
     signals.initialized.connect(setup_flickr)
 
     signals.article_generator_finalized.connect(replace_article_tags)
-    signals.pages_generator_finalized.connect(replace_page_tags)
+    signals.page_generator_finalized.connect(replace_page_tags)
