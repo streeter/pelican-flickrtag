@@ -48,9 +48,11 @@ def setup_flickr(pelican):
 
 def url_for_alias(photo, alias):
     if alias == 'Medium 640':
-        return photo.getMedium640()
+        url = photo.getMedium640()
     else:
-        return photo.getMedium()
+        url = photo.getMedium()
+    url = url.replace('http:', '').replace('https:', '')
+    return url
 
 
 def size_for_alias(sizes, alias):
