@@ -10,6 +10,7 @@ import re
 
 import flickr as api_client
 
+from pelican import signals
 
 flickr_regex = re.compile(r'<p>(\[flickr:id\=([0-9]+)\])</p>')
 default_template = """<p class="caption-container">
@@ -29,21 +30,23 @@ default_template = """<p class="caption-container">
 logger = logging.getLogger(__name__)
 
 
-def setup_flickr(pelican):
+def setup_flickr(generator):
     """Add Flickr api object to Pelican settings."""
 
     for key in ('TOKEN', 'KEY', 'SECRET'):
         try:
-            value = pelican.settings['FLICKR_API_' + key]
+            value = generator.settings['FLICKR_API_' + key]
             setattr(api_client, 'API_' + key, value)
         except KeyError:
             logger.warning('[flickrtag]: FLICKR_API_%s is not defined in the configuration' % key)
 
-    pelican.settings['FLICKR_TAG_API_CLIENT'] = api_client
-    pelican.settings.setdefault('FLICKR_TAG_CACHE_LOCATION',
+    generator.flickr_api_client = api_client
+
+    generator.settings.setdefault(
+        'FLICKR_TAG_CACHE_LOCATION',
         '/tmp/com.chrisstreeter.flickrtag-images.cache')
-    pelican.settings.setdefault('FLICKR_TAG_INCLUDE_DIMENSIONS', False)
-    pelican.settings.setdefault('FLICKR_TAG_IMAGE_SIZE', 'Medium 640')
+    generator.settings.setdefault('FLICKR_TAG_INCLUDE_DIMENSIONS', False)
+    generator.settings.setdefault('FLICKR_TAG_IMAGE_SIZE', 'Medium 640')
 
 
 def url_for_alias(photo, alias):
@@ -64,7 +67,7 @@ def size_for_alias(sizes, alias):
 def replace_article_tags(generator):
     from jinja2 import Template
 
-    api = generator.context.get('FLICKR_TAG_API_CLIENT', None)
+    api = generator.flickr_api_client
     if api is None:
         logger.error('[flickrtag]: Unable to get the Flickr API object')
         return
@@ -151,9 +154,7 @@ def replace_page_tags(generator):
 
 def register():
     """Plugin registration."""
-    from pelican import signals
-
-    signals.initialized.connect(setup_flickr)
+    signals.generator_init.connect(setup_flickr)
 
     signals.article_generator_finalized.connect(replace_article_tags)
     signals.page_generator_finalized.connect(replace_page_tags)
