@@ -23,12 +23,15 @@ AND ACKNOWLEDGEMENT OF AUTHORSHIP REMAIN.
 
 """
 
+from __future__ import print_function
+
 __author__ = "James Clarke <james@jamesclarke.info>"
 __version__ = "$Rev$"
 __date__ = "$Date$"
 __copyright__ = "Copyright: 2004-2010 James Clarke; Portions: 2007-2008 Joshua Henderson; Portions: 2011 Andrei Vlad Vacariu"
 
-from urllib import urlencode, urlopen
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.request import urlopen
 from xml.dom import minidom
 import hashlib
 import os
@@ -206,7 +209,7 @@ class Photo(object):
         try:
             tag_id = tag.id
         except AttributeError:
-            raise FlickrError, "Tag object expected"
+            raise FlickrError("Tag object expected")
         _dopost(method, auth=True, photo_id=self.id, tag_id=tag_id)
         self._load_properties()
 
@@ -267,7 +270,7 @@ class Photo(object):
         for psize in data.rsp.sizes.size:
             if psize.label == size:
                 return getattr(psize, urlType)
-        raise FlickrError, "No URL found"
+        raise FlickrError("No URL found")
 
     def getSizes(self):
         """
@@ -501,7 +504,7 @@ class Photoset(object):
         photo - primary photo
         """
         if not isinstance(photo, Photo):
-            raise TypeError, "Photo expected"
+            raise TypeError("Photo expected")
 
         method = 'flickr.photosets.create'
         data = _dopost(method, auth=True, title=title,\
@@ -1123,7 +1126,7 @@ def _doget(method, auth=False, **params):
 
     #another useful debug print statement
     if debug:
-        print "_doget", url
+        print("_doget", url)
 
     return _get_data(minidom.parse(urlopen(url)))
 
@@ -1141,8 +1144,8 @@ def _dopost(method, auth=False, **params):
 
     #another useful debug print statement
     if debug:
-        print "_dopost url", url
-        print "_dopost payload", payload
+        print("_dopost url", url)
+        print("_dopost payload", payload)
 
     return _get_data(minidom.parse(urlopen(url, payload)))
 
@@ -1159,7 +1162,7 @@ def _get_data(xml):
     data = unmarshal(xml)
     if not data.rsp.stat == 'ok':
         msg = "ERROR [%s]: %s" % (data.rsp.err.code, data.rsp.err.msg)
-        raise FlickrError, msg
+        raise FlickrError(msg)
     return data
 
 def _get_api_sig(params):
@@ -1272,7 +1275,7 @@ def unmarshal(element):
         for child in childElements:
             key = child.tagName
             if hasattr(rc, key):
-                if type(getattr(rc, key)) <> type([]):
+                if type(getattr(rc, key)) != type([]):
                     setattr(rc, key, [getattr(rc, key)])
                 setattr(rc, key, getattr(rc, key) + [unmarshal(child)])
             elif isinstance(child, minidom.Element) and \
@@ -1404,4 +1407,4 @@ def getUserPhotosURL(userid):
     return userurl
 
 if __name__ == '__main__':
-    print test_echo()
+    print(test_echo())

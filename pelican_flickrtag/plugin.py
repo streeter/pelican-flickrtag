@@ -8,7 +8,7 @@ import logging
 import pickle
 import re
 
-import flickr as api_client
+import pelican_flickrtag.flickr as api_client
 
 from pelican import signals
 
