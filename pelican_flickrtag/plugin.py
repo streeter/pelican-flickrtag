@@ -12,7 +12,7 @@ import pelican_flickrtag.flickr as api_client
 
 from pelican import signals
 
-flickr_regex = re.compile(r'<p>(\[flickr:id\=([0-9]+)\])</p>')
+flickr_regex = re.compile(r'<p>(\[flickr:id\=([0-9]+)(?:,title\=(.+))?\])</p>')
 default_template = """<p class="caption-container">
     <a class="caption" href="{{url}}" target="_blank">
         <img src="{{raw_url}}"
@@ -81,7 +81,9 @@ def replace_article_tags(generator):
     logger.info('[flickrtag]: Parsing articles for photo ids...')
     for article in generator.articles:
         for match in flickr_regex.findall(article._content):
-            photo_ids.add(match[1])
+            id, title = match[1:3]
+            fid = '{}-{}'.format(id, title) if title else id
+            photo_ids.add(fid)
 
     logger.info('[flickrtag]: Found %d photo ids in the articles' % len(photo_ids))
 
@@ -97,12 +99,13 @@ def replace_article_tags(generator):
 
     if photo_ids:
         logger.info('[flickrtag]: Fetching photo information from Flickr...')
-        for id in photo_ids:
-            logger.info('[flickrtag]: Fetching photo information for %s' % id)
-            photo = api.Photo(id=id)
+        for fid in photo_ids:
+            logger.info('[flickrtag]: Fetching photo information for %s' % fid)
+            id, title = (fid.split('-', 1) + [''])[:2]
+            photo = api.Photo(id=int(id))
             # Trigger the API call...
-            photo_mapping[id] = {
-                'title': photo.title,
+            photo_mapping[fid] = {
+                'title': title or photo.title,
                 'raw_url': url_for_alias(photo, size_alias),
                 'url': photo.url,
             }
@@ -110,8 +113,8 @@ def replace_article_tags(generator):
             if include_dimensions:
                 sizes = photo.getSizes()
                 size = size_for_alias(sizes, size_alias)
-                photo_mapping[id]['width'] = size['width']
-                photo_mapping[id]['height'] = size['height']
+                photo_mapping[fid]['width'] = size['width']
+                photo_mapping[fid]['height'] = size['height']
 
         with open(tmp_file, 'w') as f:
             pickle.dump(photo_mapping, f)
@@ -133,7 +136,9 @@ def replace_article_tags(generator):
     logger.info('[flickrtag]: Inserting photo information into articles...')
     for article in generator.articles:
         for match in flickr_regex.findall(article._content):
-            fid = match[1]
+            fid, title = match[1:3]
+            if title:
+                fid = '{}-{}'.format(fid, title)
             if fid not in photo_mapping:
                 logger.error('[flickrtag]: Could not find info for a photo!')
                 continue

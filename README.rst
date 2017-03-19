@@ -44,6 +44,12 @@ This will tell the plugin to insert the image with id ``8152886277`` into your p
         <span class="caption-text muted">Sand Dunes</span>
     </p>
 
+If you want a custom title, you can use:
+
+.. code-block:: html
+
+    [flickr:id=5128831453,title=Sand dunes at Inyo, California]
+
 If you want to change what the output looks like, you can create your own Jinja template and stick it in your theme directory. Then override the ``FLICKR_TAG_TEMPLATE_NAME`` setting to point to your template. See below for more information.
 
 
