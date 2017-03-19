@@ -72,10 +72,10 @@ def replace_article_tags(generator):
         logger.error('[flickrtag]: Unable to get the Flickr API object')
         return
 
-    tmp_file = generator.context.get('FLICKR_TAG_CACHE_LOCATION')
+    tmp_file = generator.settings['FLICKR_TAG_CACHE_LOCATION']
 
-    include_dimensions = generator.context.get('FLICKR_TAG_INCLUDE_DIMENSIONS')
-    size_alias = generator.context.get('FLICKR_TAG_IMAGE_SIZE')
+    include_dimensions = generator.settings['FLICKR_TAG_INCLUDE_DIMENSIONS']
+    size_alias = generator.settings['FLICKR_TAG_IMAGE_SIZE']
 
     photo_ids = set([])
     logger.info('[flickrtag]: Parsing articles for photo ids...')
@@ -86,9 +86,9 @@ def replace_article_tags(generator):
     logger.info('[flickrtag]: Found %d photo ids in the articles' % len(photo_ids))
 
     try:
-        with open(tmp_file, 'r') as f:
+        with open(tmp_file, 'rb') as f:
             photo_mapping = pickle.load(f)
-    except (IOError, EOFError):
+    except (IOError, EOFError, ValueError):
         photo_mapping = {}
     else:
         # Get the difference of photo_ids and what have cached
@@ -113,13 +113,13 @@ def replace_article_tags(generator):
                 photo_mapping[id]['width'] = size['width']
                 photo_mapping[id]['height'] = size['height']
 
-        with open(tmp_file, 'w') as f:
+        with open(tmp_file, 'wb') as f:
             pickle.dump(photo_mapping, f)
     else:
         logger.info('[flickrtag]: Found pickled photo mapping')
 
     # See if a custom template was provided
-    template_name = generator.context.get('FLICKR_TAG_TEMPLATE_NAME')
+    template_name = generator.settings['FLICKR_TAG_TEMPLATE_NAME']
     if template_name is not None:
         # There's a custom template
         try:
