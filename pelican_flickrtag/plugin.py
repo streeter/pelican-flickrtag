@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Embed Flickr Images in Pelican Articles
-=======================================
+Embed Flickr Images in Pelican Articles and Pages
+=================================================
 
 """
 import logging
@@ -64,7 +64,7 @@ def size_for_alias(sizes, alias):
     return [s for s in sizes if s['label'] == alias][0]
 
 
-def replace_article_tags(generator):
+def replace_tags(generator, documents):
     from jinja2 import Template
 
     api = generator.flickr_api_client
@@ -78,14 +78,13 @@ def replace_article_tags(generator):
     size_alias = generator.settings['FLICKR_TAG_IMAGE_SIZE']
 
     photo_ids = set([])
-    logger.info('[flickrtag]: Parsing articles for photo ids...')
-    for article in generator.articles:
-        for match in flickr_regex.findall(article._content):
+    for document in documents:
+        for match in flickr_regex.findall(document._content):
             id, title = match[1:3]
             fid = '{}-{}'.format(id, title) if title else id
             photo_ids.add(fid)
 
-    logger.info('[flickrtag]: Found %d photo ids in the articles' % len(photo_ids))
+    photo_ids_found = len(photo_ids)
 
     try:
         with open(tmp_file, 'rb') as f:
@@ -133,9 +132,9 @@ def replace_article_tags(generator):
     else:
         template = Template(default_template)
 
-    logger.info('[flickrtag]: Inserting photo information into articles...')
-    for article in generator.articles:
-        for match in flickr_regex.findall(article._content):
+    logger.info('[flickrtag]: Inserting photo information...')
+    for document in documents:
+        for match in flickr_regex.findall(document._content):
             fid, title = match[1:3]
             if title:
                 fid = '{}-{}'.format(fid, title)
@@ -150,11 +149,21 @@ def replace_article_tags(generator):
             # Render the template
             replacement = template.render(context)
 
-            article._content = article._content.replace(match[0], replacement)
+            document._content = document._content.replace(match[0], replacement)
+
+    return photo_ids_found
+
+
+def replace_article_tags(generator):
+    logger.info('[flickrtag]: Parsing articles for photo ids...')
+    total = replace_tags(generator, generator.articles)
+    logger.info('[flickrtag]: Found %d photos ids in articles' % total)
 
 
 def replace_page_tags(generator):
-    pass
+    logger.info('[flickrtag]: Parsing pages for photo ids...')
+    total = replace_tags(generator, generator.pages)
+    logger.info('[flickrtag]: Found %d photos ids in pages' % total)
 
 
 def register():
