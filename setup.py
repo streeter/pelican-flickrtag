@@ -43,12 +43,7 @@ setup(
     include_package_data=True,
     install_requires=requires,
     license='MIT',
-    zip_safe=False,
-    classifiers=(
-        'Environment :: Console',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Natural Language :: English',
+    classifiers=[
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
@@ -58,5 +53,5 @@ setup(
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing',
-    ),
+    ],
 )
